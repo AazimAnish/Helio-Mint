@@ -1,0 +1,34 @@
+{
+  "version": "v3.8.5",
+  "name": "CreateEnergyNFT",
+  "bytecodeTemplate": "0101030005004027{1}0c330c7b{2}13c3038d7ea4c68000330d7b{0}{1}{3}130364{0}{1}{2}0413046417011700140201011702b413c3038d7ea4c68000a2160216001601ad1703160317040c0c16040100",
+  "fieldsSig": {
+    "names": [
+      "contractOwner",
+      "initialEnergy",
+      "initialPrice",
+      "nftId"
+    ],
+    "types": [
+      "Address",
+      "U256",
+      "U256",
+      "ByteVec"
+    ],
+    "isMutable": [
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "functions": [
+    {
+      "name": "main",
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": []
+    }
+  ]
+}

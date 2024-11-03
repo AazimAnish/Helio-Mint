@@ -1,0 +1,124 @@
+Contract EnergyNFT(
+    // Immutable fields
+    initialOwner: Address,
+    initialEnergyAmount: U256,
+    tokenId: ByteVec,
+    
+    // Mutable fields
+    mut owner: Address,
+    mut energyAmount: U256,
+    mut price: U256,
+    mut isListed: Bool
+) {
+    // Events
+    event NFTMinted(owner: Address, tokenId: ByteVec, energyAmount: U256)
+    event NFTListed(tokenId: ByteVec, price: U256)  
+    event NFTSold(from: Address, to: Address, tokenId: ByteVec, price: U256)
+    event EnergyUpdated(tokenId: ByteVec, newAmount: U256)
+
+    enum ErrorCodes {
+        NotOwner = 0
+        NotListed = 1
+        AlreadyListed = 2
+        InvalidAmount = 3
+        InvalidBuyer = 4
+        InsufficientPayment = 5
+        NotInitialOwner = 6
+    }
+
+    // Initialize contract
+    @using(updateFields = true, checkExternalCaller = true)
+    pub fn mint() -> () {
+        checkCaller!(callerAddress!() == initialOwner, ErrorCodes.NotInitialOwner)
+        assert!(initialEnergyAmount > 0, ErrorCodes.InvalidAmount)
+        owner = initialOwner
+        energyAmount = initialEnergyAmount
+        isListed = false
+        emit NFTMinted(owner, tokenId, energyAmount)
+    }
+
+    // List NFT for sale
+    @using(updateFields = true, checkExternalCaller = true)
+    pub fn listForSale(newPrice: U256) -> () {
+        checkCaller!(callerAddress!() == owner, ErrorCodes.NotOwner)
+        assert!(!isListed, ErrorCodes.AlreadyListed)
+        assert!(newPrice > dustAmount!(), ErrorCodes.InvalidAmount)
+        
+        price = newPrice
+        isListed = true
+        emit NFTListed(tokenId, price)
+    }
+
+    // Buy NFT
+    @using(assetsInContract = true, updateFields = true, checkExternalCaller = false, preapprovedAssets = true)
+    pub fn buy() -> () {
+        let buyer = callerAddress!()
+        assert!(isListed, ErrorCodes.NotListed)
+        assert!(buyer != owner, ErrorCodes.InvalidBuyer)
+        
+        let previousOwner = owner
+        let paymentAmount = tokenRemaining!(buyer, ALPH)
+        assert!(paymentAmount >= price, ErrorCodes.InsufficientPayment)
+        
+        transferTokenToSelf!(buyer, ALPH, price)
+        transferTokenFromSelf!(previousOwner, ALPH, price)
+        
+        owner = buyer
+        isListed = false
+        
+        emit NFTSold(previousOwner, buyer, tokenId, price)
+    }
+
+    // Update energy amount
+    @using(updateFields = true, checkExternalCaller = true)
+    pub fn updateEnergy(newAmount: U256) -> () {
+        checkCaller!(callerAddress!() == owner, ErrorCodes.NotOwner)
+        assert!(newAmount > 0, ErrorCodes.InvalidAmount)
+        
+        energyAmount = newAmount
+        emit EnergyUpdated(tokenId, newAmount)
+    }
+
+    // View functions to get NFT data
+    pub fn getEnergyData() -> (Address, U256, U256, Bool) {
+        return owner, energyAmount, price, isListed
+    }
+
+    pub fn getOwner() -> Address {
+        return owner
+    }
+
+    pub fn getPrice() -> U256 {
+        return price
+    }
+
+    pub fn isForSale() -> Bool {
+        return isListed
+    }
+}
+
+@using(preapprovedAssets = true)
+TxScript CreateEnergyNFT(
+    contractOwner: Address,
+    initialEnergy: U256,
+    initialPrice: U256,
+    nftId: ByteVec
+) {
+    assert!(initialEnergy > 0, 0)
+    assert!(initialPrice > dustAmount!(), 1)
+    
+    let (immFields, mutFields) = EnergyNFT.encodeFields!(
+        contractOwner,      // initialOwner
+        initialEnergy,      // initialEnergyAmount
+        nftId,             // tokenId
+        contractOwner,      // owner
+        initialEnergy,      // energyAmount
+        initialPrice,       // price
+        false              // isListed
+    )
+    
+    let templateId = #0101           // Contract template bytecode
+    let contractId = createContract!{callerAddress!() -> ALPH: dustAmount!()}(templateId, immFields, mutFields)
+    let energyNFT = EnergyNFT(contractId)
+    energyNFT.mint()
+}

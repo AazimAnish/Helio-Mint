@@ -1,13 +1,20 @@
 import { Configuration } from '@alephium/cli'
-import { Number256 } from '@alephium/web3'
+import { Number256, web3 } from '@alephium/web3'
 
 // Settings are usually for configuring
-export type Settings = {
+export type AppSettings = {
   issueTokenAmount: Number256
+  initialEnergy: Number256
+  initialPrice: Number256
 }
-const defaultSettings: Settings = { issueTokenAmount: 100n }
 
-const configuration: Configuration<Settings> = {
+const defaultSettings: AppSettings = {
+  issueTokenAmount: 1_000_000_000_000n,
+  initialEnergy: 100n,
+  initialPrice: 1_000_000_000n
+}
+
+const configuration: Configuration<AppSettings> = {
   networks: {
     devnet: {
       nodeUrl: 'http://127.0.0.1:22973',

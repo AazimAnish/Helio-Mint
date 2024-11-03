@@ -12,9 +12,11 @@ import {
   HexString,
 } from "@alephium/web3";
 import { getContractByCodeHash } from "./contracts";
-import { default as WithdrawScriptJson } from "../Withdraw.ral.json";
+import { default as CreateEnergyNFTScriptJson } from "../CreateEnergyNFT.ral.json";
 
-export const Withdraw = new ExecutableScript<{
-  token: HexString;
-  amount: bigint;
-}>(Script.fromJson(WithdrawScriptJson, "", []), getContractByCodeHash);
+export const CreateEnergyNFT = new ExecutableScript<{
+  contractOwner: Address;
+  initialEnergy: bigint;
+  initialPrice: bigint;
+  nftId: HexString;
+}>(Script.fromJson(CreateEnergyNFTScriptJson, "", []), getContractByCodeHash);

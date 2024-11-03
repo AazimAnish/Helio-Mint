@@ -1,0 +1,225 @@
+{
+  "version": "v3.8.5",
+  "name": "EnergyNFT",
+  "bytecode": "0708402b405c40a140c240d640e440f24100010000000016d37b3303cab4ce004513067bce010c330f7bce00a100ce01a10104a10305a000ce02a00160010001010017d33b46a10cb4a000450c7ba003190e7b160013c3038d7ea4c68000330f7b1600a10203a10306ce02a0025f01010003004025d3466acf02b41700a0030d7b1600a00046107ba00017011600a417021602a00234117b1600a002a91601a002a81600a10004a1030716011600ce02a00261010001010011d38c8c4811b4a000450c7b16000c330f7b1600a10108ce0216005f010000000406d3f6319530a000a001a002a00302010000000103d34ffef083a00002010000000103d3fd609717a00202010000000103d33e92c326a00302",
+  "codeHash": "5b480f1923defa9589f68cc2e5e0e5519f754403f9ad4d722854ed9c5f8a93b9",
+  "fieldsSig": {
+    "names": [
+      "initialOwner",
+      "initialEnergyAmount",
+      "tokenId",
+      "owner",
+      "energyAmount",
+      "price",
+      "isListed"
+    ],
+    "types": [
+      "Address",
+      "U256",
+      "ByteVec",
+      "Address",
+      "U256",
+      "U256",
+      "Bool"
+    ],
+    "isMutable": [
+      false,
+      false,
+      false,
+      true,
+      true,
+      true,
+      true
+    ]
+  },
+  "eventsSig": [
+    {
+      "name": "NFTMinted",
+      "fieldNames": [
+        "owner",
+        "tokenId",
+        "energyAmount"
+      ],
+      "fieldTypes": [
+        "Address",
+        "ByteVec",
+        "U256"
+      ]
+    },
+    {
+      "name": "NFTListed",
+      "fieldNames": [
+        "tokenId",
+        "price"
+      ],
+      "fieldTypes": [
+        "ByteVec",
+        "U256"
+      ]
+    },
+    {
+      "name": "NFTSold",
+      "fieldNames": [
+        "from",
+        "to",
+        "tokenId",
+        "price"
+      ],
+      "fieldTypes": [
+        "Address",
+        "Address",
+        "ByteVec",
+        "U256"
+      ]
+    },
+    {
+      "name": "EnergyUpdated",
+      "fieldNames": [
+        "tokenId",
+        "newAmount"
+      ],
+      "fieldTypes": [
+        "ByteVec",
+        "U256"
+      ]
+    }
+  ],
+  "functions": [
+    {
+      "name": "mint",
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": []
+    },
+    {
+      "name": "listForSale",
+      "paramNames": [
+        "newPrice"
+      ],
+      "paramTypes": [
+        "U256"
+      ],
+      "paramIsMutable": [
+        false
+      ],
+      "returnTypes": []
+    },
+    {
+      "name": "buy",
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": []
+    },
+    {
+      "name": "updateEnergy",
+      "paramNames": [
+        "newAmount"
+      ],
+      "paramTypes": [
+        "U256"
+      ],
+      "paramIsMutable": [
+        false
+      ],
+      "returnTypes": []
+    },
+    {
+      "name": "getEnergyData",
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": [
+        "Address",
+        "U256",
+        "U256",
+        "Bool"
+      ]
+    },
+    {
+      "name": "getOwner",
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": [
+        "Address"
+      ]
+    },
+    {
+      "name": "getPrice",
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": [
+        "U256"
+      ]
+    },
+    {
+      "name": "isForSale",
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": [
+        "Bool"
+      ]
+    }
+  ],
+  "constants": [],
+  "enums": [
+    {
+      "name": "ErrorCodes",
+      "fields": [
+        {
+          "name": "NotOwner",
+          "value": {
+            "type": "U256",
+            "value": "0"
+          }
+        },
+        {
+          "name": "NotListed",
+          "value": {
+            "type": "U256",
+            "value": "1"
+          }
+        },
+        {
+          "name": "AlreadyListed",
+          "value": {
+            "type": "U256",
+            "value": "2"
+          }
+        },
+        {
+          "name": "InvalidAmount",
+          "value": {
+            "type": "U256",
+            "value": "3"
+          }
+        },
+        {
+          "name": "InvalidBuyer",
+          "value": {
+            "type": "U256",
+            "value": "4"
+          }
+        },
+        {
+          "name": "InsufficientPayment",
+          "value": {
+            "type": "U256",
+            "value": "5"
+          }
+        },
+        {
+          "name": "NotInitialOwner",
+          "value": {
+            "type": "U256",
+            "value": "6"
+          }
+        }
+      ]
+    }
+  ]
+}

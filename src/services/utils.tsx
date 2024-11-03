@@ -1,25 +1,24 @@
-import { NetworkId } from "@alephium/web3";
-import { loadDeployments } from "../../artifacts/ts/deployments"
+import { NetworkId } from "@alephium/web3"
+import { getEnergyNFTContract } from './nft.service'
 
-export interface TokenFaucetConfig {
+export interface HelioMintConfig {
   network: NetworkId
   groupIndex: number
-  tokenFaucetAddress: string
-  faucetTokenId: string
+  nftContractAddress: string
 }
 
 function getNetwork(): NetworkId {
-  const network = (process.env.NEXT_PUBLIC_NETWORK ?? 'devnet') as NetworkId
-  return network
+  return (process.env.NEXT_PUBLIC_NETWORK ?? 'devnet') as NetworkId
 }
 
-function getTokenFaucetConfig(): TokenFaucetConfig {
+function getHelioMintConfig(): HelioMintConfig {
   const network = getNetwork()
-  const tokenFaucet = loadDeployments(network).contracts.TokenFaucet.contractInstance
-  const groupIndex = tokenFaucet.groupIndex
-  const tokenFaucetAddress = tokenFaucet.address
-  const faucetTokenId = tokenFaucet.contractId
-  return { network, groupIndex, tokenFaucetAddress, faucetTokenId }
+  const energyNFT = getEnergyNFTContract()
+  return {
+    network,
+    groupIndex: energyNFT.groupIndex,
+    nftContractAddress: energyNFT.address
+  }
 }
 
-export const tokenFaucetConfig = getTokenFaucetConfig()
+export const heliomintConfig = getHelioMintConfig()

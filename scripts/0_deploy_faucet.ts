@@ -1,29 +1,55 @@
 import { Deployer, DeployFunction, Network } from '@alephium/cli'
-import { Settings } from '../alephium.config'
-import { TokenFaucet } from '../artifacts/ts'
+import { AppSettings } from '../alephium.config'
+import { EnergyNFT, CreateEnergyNFT } from '../artifacts/ts'
+import { randomBytes } from 'crypto'
+import { binToHex } from '@alephium/web3'
 
-// This deploy function will be called by cli deployment tool automatically
-// Note that deployment scripts should prefixed with numbers (starting from 0)
-const deployFaucet: DeployFunction<Settings> = async (
+const deployEnergyNFT: DeployFunction<AppSettings> = async (
   deployer: Deployer,
-  network: Network<Settings>
+  network: Network<AppSettings>
 ): Promise<void> => {
-  // Get settings
-  const issueTokenAmount = network.settings.issueTokenAmount
-  const result = await deployer.deployContract(TokenFaucet, {
-    // The amount of token to be issued
-    issueTokenAmount: issueTokenAmount,
-    // The initial states of the faucet contract
+  // Get settings from network configuration
+  const initialEnergy = BigInt(network.settings.initialEnergy.toString())
+  const initialPrice = BigInt(network.settings.initialPrice.toString())
+
+  // Generate a random NFT ID
+  const nftId = binToHex(randomBytes(32))
+
+  // Get the contract owner's address
+  const contractOwner = await deployer.account.address
+
+  // Deploy the EnergyNFT contract
+  const result = await deployer.deployContract(EnergyNFT, {
     initialFields: {
-      symbol: Buffer.from('TF', 'utf8').toString('hex'),
-      name: Buffer.from('TokenFaucet', 'utf8').toString('hex'),
-      decimals: 0n,
-      supply: issueTokenAmount,
-      balance: issueTokenAmount
+      initialOwner: contractOwner,
+      initialEnergyAmount: initialEnergy,
+      tokenId: nftId,
+      owner: contractOwner,
+      energyAmount: initialEnergy,
+      price: initialPrice,
+      isListed: false
     }
   })
-  console.log('Token faucet contract id: ' + result.contractInstance.contractId)
-  console.log('Token faucet contract address: ' + result.contractInstance.address)
+
+  // Log the deployment results
+  console.log('EnergyNFT contract deployed:')
+  console.log('Contract ID:', result.contractInstance.contractId)
+  console.log('Contract Address:', result.contractInstance.address)
+  console.log('NFT ID:', nftId)
+  console.log('Owner Address:', contractOwner)
+
+  // Execute the CreateEnergyNFT transaction script
+  const txResult = await deployer.runScript(CreateEnergyNFT, {
+    initialFields: {
+      contractOwner: contractOwner,
+      initialEnergy: initialEnergy,
+      initialPrice: initialPrice,
+      nftId: nftId
+    }
+  })
+
+  console.log('CreateEnergyNFT transaction executed:')
+  console.log('Transaction ID:', txResult.txId)
 }
 
-export default deployFaucet
+export default deployEnergyNFT

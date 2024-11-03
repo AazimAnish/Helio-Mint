@@ -1,10 +1,15 @@
-import React from 'react';
-import Home from '@/components/Home';
+import { Hero } from '@/components/hero'
+// import { Features } from '@/components/features'
+// import { About } from '@/components/about'
+// import { CTABanner } from '@/components/cta-banner'
 
-export default function HomePage() {
+export default function Home() {
   return (
-    <>
-      <Home />
-    </>
+    <div className="space-y-20">
+      <Hero />
+      {/* <About />
+      <Features />
+      <CTABanner /> */}
+    </div>
   )
 }
